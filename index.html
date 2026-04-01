@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Firebase</title>
+
+  <!-- CSS interno -->
+  <style>
+    body {
+      background: #1a0000;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    .login-container {
+      margin-top: 100px;
+      background: #2a0000;
+      padding: 30px;
+      border-radius: 10px;
+      border: 1px solid #b87333;
+      width: 90%;
+      max-width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    input, button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 90%;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background: #b87333;
+      color: white;
+      cursor: pointer;
+    }
+
+    .shake {
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+<div class="login-container" id="loginBox">
+  <h2>Entrar</h2>
+  <input type="email" id="email" placeholder="Seu Gmail">
+  <input type="password" id="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <button onclick="register()">Criar conta</button>
+  <button onclick="recover()">Esqueci a senha</button>
+</div>
+
+<!-- JS interno -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAkE0DEk4M2cRuGV3KUft0uChblI5OEaZY",
+    authDomain: "projetokid2026.firebaseapp.com",
+    projectId: "projetokid2026"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  let tentativas = 0;
+
+  function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const box = document.getElementById("loginBox");
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => alert("Login realizado!"))
+      .catch((e) => {
+        tentativas++;
+        box.classList.add("shake");
+        setTimeout(() => box.classList.remove("shake"), 300);
+
+        if (tentativas >= 3) {
+          alert("Use recuperação de senha!");
+        }
+      });
+  }
+
+  function register() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => alert("Conta criada!"))
+      .catch((e) => alert(e.message));
+  }
+
+  function recover() {
+    const email = document.getElementById("email").value;
+
+    auth.sendPasswordResetEmail(email)
+      .then(() => alert("Email de recuperação enviado!"))
+      .catch((e) => alert(e.message));
+  }
+</script>
+
+</body>
+</html>
